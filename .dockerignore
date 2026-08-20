@@ -1,9 +1,7 @@
-target/
-!.dockerignore
-*.log
 .git
 .gitignore
 README.md
 .vscode
 .idea
 *.iml
+*.log
