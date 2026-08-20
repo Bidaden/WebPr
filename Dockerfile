@@ -1,28 +1,26 @@
-# Stage 1: Build ứng dụng với Maven
+# Build stage
 FROM maven:3.9-eclipse-temurin-17 AS build
-
 WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 2: Chạy ứng dụng với Tomcat 10.1
-FROM tomcat:10.1-jdk17
+# Run stage - Sử dụng Tomcat 10 chính thức
+FROM tomcat:10.1.57-jdk17
 
-# Xóa ứng dụng mặc định
+# Remove default apps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy file WAR và đổi tên thành ROOT.war
+# Copy WAR file với tên ROOT.war
 COPY --from=build /app/target/WebAppMaven-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Copy server.xml tùy chỉnh
-COPY server.xml /usr/local/tomcat/conf/server.xml
-
-# QUAN TRỌNG: Set PORT environment variable và override trong catalina.sh
-ENV PORT=8080
-ENV CATALINA_OPTS="-Dserver.port=${PORT}"
-
+# Expose port 8080 (Render yêu cầu port này)
 EXPOSE 8080
 
+# Set environment
+ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
+ENV CATALINA_OPTS="-Dserver.port=8080"
+
+# Start Tomcat
 CMD ["catalina.sh", "run"]
