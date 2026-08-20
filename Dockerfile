@@ -1,26 +1,16 @@
-# Build stage
-FROM maven:3.9-eclipse-temurin-17 AS build
-WORKDIR /app
-COPY pom.xml .
-RUN mvn dependency:go-offline
-COPY src ./src
-RUN mvn clean package -DskipTests
+FROM tomcat:10.1-jdk17
 
-# Run stage - Sử dụng Tomcat 10 chính thức
-FROM tomcat:10.1.57-jdk17
-
-# Remove default apps
+# Remove default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy WAR file với tên ROOT.war
-COPY --from=build /app/target/WebAppMaven-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+# Copy WAR file trực tiếp (không qua build stage)
+COPY target/WebAppMaven-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Expose port 8080 (Render yêu cầu port này)
+# Expose port 8080
 EXPOSE 8080
 
-# Set environment
-ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
-ENV CATALINA_OPTS="-Dserver.port=8080"
+# Set JAVA_OPTS
+ENV JAVA_OPTS="-Djava.awt.headless=true -Xmx512m"
 
-# Start Tomcat
+# Start Tomcat foreground
 CMD ["catalina.sh", "run"]
