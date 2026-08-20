@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDB {
+    // Lưu trữ tạm trong bộ nhớ (không ghi file, tránh lỗi trên Render)
     private static final List<User> users = new ArrayList<>();
 
     public static void save(User user) {
