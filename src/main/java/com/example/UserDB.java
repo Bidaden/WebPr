@@ -1,36 +1,27 @@
 package com.example;
 
-import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDB {
 
+    // Lưu trữ tạm trong bộ nhớ (phù hợp để deploy lên Render free tier)
+    private static final List<User> users = new ArrayList<>();
+
     public static void save(User user) {
-        // Get the absolute path to the users.txt file
-        String path = "c:\\murach\\java_web\\apps\\javaee\\userDB\\users.txt";
+        // Thêm user vào danh sách
+        users.add(user);
 
-        // Create a File object
-        File file = new File(path);
+        // In ra console để bạn có thể theo dõi trên Render Logs
+        System.out.println("=== USER SAVED ===");
+        System.out.println("First Name: " + user.getFirstName());
+        System.out.println("Last Name: " + user.getLastName());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("Total users in memory: " + users.size());
+        System.out.println("==================");
+    }
 
-        try {
-            // Create parent directories if they don't exist
-            file.getParentFile().mkdirs();
-
-            // Create file if it doesn't exist
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            // Write user data to file
-            PrintWriter out = new PrintWriter(
-                    new FileWriter(file, true));
-
-            out.println(user.getFirstName() + "\t" +
-                    user.getLastName() + "\t" +
-                    user.getEmail());
-            out.close();
-
-        } catch (IOException e) {
-            System.out.println("Error writing to file: " + e.getMessage());
-        }
+    public static List<User> getAllUsers() {
+        return new ArrayList<>(users);
     }
 }
