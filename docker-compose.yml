@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  webapp:
+    build: .
+    container_name: webapp-maven
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - ./logs:/usr/local/tomcat/logs
